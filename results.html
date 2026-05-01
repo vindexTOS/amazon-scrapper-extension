@@ -13,6 +13,13 @@
     button.secondary { background: #fff; color: #111; }
     button.danger { background: #fff; color: #b00; border-color: #d99; }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
+    tr.clickable-row {
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    tr.clickable-row:hover td {
+      background: #f0f7ff !important; /* Light blue highlight on hover */
+    }
     .count { color: #555; font-size: 13px; }
     .progress-wrap { padding: 0 16px; background: #fff; border-bottom: 1px solid #e1e1e1; }
     .progress-bar { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin: 8px 0; }
@@ -57,8 +64,6 @@
           <th>Price</th>
           <th>Reviews</th>
           <th>Page</th>
-          <th>Link</th>
-          <th>Main</th>
           <th>Months</th>
         </tr>
       </thead>

@@ -15,7 +15,7 @@ function escapeHtml(s) {
 function render() {
   const q = filterEl.value.trim().toLowerCase();
   // Inside render() function
-const filtered = allItems.filter(i => {
+  const filtered = allItems.filter(i => {
   const matchesSearch = q ? ['title','asin','price'].some(k => (i[k] || '').toLowerCase().includes(q)) : true;
   return matchesSearch && i.hasMonths === true; // Only show hasMonths: true
 });
@@ -27,6 +27,7 @@ const filtered = allItems.filter(i => {
   const frag = document.createDocumentFragment();
   filtered.forEach((it, i) => {
     const tr = document.createElement('tr');
+    tr.className = 'clickable-row';
     tr.innerHTML = `
       <td>${i + 1}</td>
       <td>${it.image ? `<img class="thumb" src="${escapeHtml(it.image)}" loading="lazy">` : ''}</td>
@@ -34,10 +35,17 @@ const filtered = allItems.filter(i => {
       <td>${escapeHtml(it.price)}</td>
       <td>${escapeHtml(it.reviews)}</td>
       <td>${escapeHtml(it.page)}</td>
-      <td>${it.url ? `<a href="${escapeHtml(it.url)}" target="_blank" rel="noopener">Open</a>` : ''}</td>
-      <td>${it.hasMonths ? 'true' : 'false'}</td>
       <td style="font-weight:bold; color:#b12704">${escapeHtml(it.monthCount)}</td> 
     `;
+    tr.addEventListener('click', (e) => {
+    // If the user clicked the actual "Open" link, don't do anything extra
+      if (e.target.classList.contains('row-link')) return;
+
+      // Otherwise, open the URL in a new tab
+      if (it.url) {
+        window.open(it.url, '_blank');
+      }
+    });
     frag.appendChild(tr);
   });
   tbody.appendChild(frag);
