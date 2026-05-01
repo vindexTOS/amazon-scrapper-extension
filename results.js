@@ -36,6 +36,7 @@ function render() {
       <td>${escapeHtml(it.asin)}</td>
       <td>${escapeHtml(it.sponsored)}</td>
       <td>${it.url ? `<a href="${escapeHtml(it.url)}" target="_blank" rel="noopener">Open</a>` : ''}</td>
+      <td>${it.hasMonths ? 'true' : 'false'}</td>
     `;
     frag.appendChild(tr);
   });
@@ -51,7 +52,7 @@ function setProgress(message, current, total) {
 filterEl.addEventListener('input', render);
 
 document.getElementById('csv').addEventListener('click', () => {
-  const headers = ['asin','title','price','rating','reviews','page','sponsored','url','image'];
+  const headers = ['asin','title','price','rating','reviews','page','sponsored','url','image','hasMonths'];
   const csvCell = (v) => {
     const s = String(v == null ? '' : v);
     return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
@@ -160,6 +161,12 @@ function pageScraper() {
       || card.querySelector('[aria-label*="Sponsored"]')
       || card.querySelector('.s-sponsored-label-info-icon')
     );
+    
+    const textContent = (card.innerText || '').toLowerCase();
+    const htmlContent = (card.innerHTML || '').toLowerCase();
+
+    const hasMonths = textContent.includes('months') || htmlContent.includes('months');
+
     let href = '';
     if (linkEl) {
       try { href = new URL(linkEl.getAttribute('href'), location.origin).href; } catch (e) { href = linkEl.getAttribute('href') || ''; }
@@ -172,7 +179,8 @@ function pageScraper() {
       rating: ratingEl ? ratingEl.textContent.trim() : '',
       reviews: reviewEl ? reviewEl.textContent.trim() : '',
       image: imgEl ? imgEl.getAttribute('src') : '',
-      sponsored: sponsored ? 'yes' : 'no'
+      sponsored: sponsored ? 'yes' : 'no',
+      hasMonths 
     });
   });
   return { captcha: false, items };
