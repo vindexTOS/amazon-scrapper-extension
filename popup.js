@@ -36,3 +36,4 @@ openBtn.addEventListener('click', async () => {
   await chrome.tabs.create({ url: chrome.runtime.getURL('results.html') });
   window.close();
 });
+const minPriceEl = document.getElementById('minPrice');

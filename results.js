@@ -14,9 +14,11 @@ function escapeHtml(s) {
 
 function render() {
   const q = filterEl.value.trim().toLowerCase();
-  const filtered = q
-    ? allItems.filter(i => ['title','asin','price'].some(k => (i[k] || '').toLowerCase().includes(q)))
-    : allItems;
+  // Inside render() function
+const filtered = allItems.filter(i => {
+  const matchesSearch = q ? ['title','asin','price'].some(k => (i[k] || '').toLowerCase().includes(q)) : true;
+  return matchesSearch && i.hasMonths === true; // Only show hasMonths: true
+});
   countEl.textContent = filtered.length === allItems.length
     ? `${allItems.length} items`
     : `${filtered.length} of ${allItems.length} items`;
@@ -57,17 +59,26 @@ document.getElementById('csv').addEventListener('click', () => {
     const s = String(v == null ? '' : v);
     return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
   };
+  
+  // Filter for only hasMonths: true
+  const filteredItems = allItems.filter(i => i.hasMonths === true);
+
   const rows = [headers.join(',')]
-    .concat(allItems.map(i => headers.map(h => csvCell(i[h])).join(',')));
-  // BOM so Excel detects UTF-8 cleanly
-  download(filename('csv'), '﻿' + rows.join('\r\n'), 'text/csv;charset=utf-8;');
+    .concat(filteredItems.map(i => headers.map(h => csvCell(i[h])).join(',')));
+    
+  download(filename('csv'), '\ufeff' + rows.join('\r\n'), 'text/csv;charset=utf-8;');
 });
 
 document.getElementById('xls').addEventListener('click', () => {
   const headers = ['asin','title','price','rating','reviews','page','sponsored','url','image'];
   const xmlEsc = (v) => String(v == null ? '' : v).replace(/[<>&'"]/g, c => ({ '<':'&lt;','>':'&gt;','&':'&amp;','\'':'&apos;','"':'&quot;' }[c]));
+  
+  // Filter for only hasMonths: true
+  const filteredItems = allItems.filter(it => it.hasMonths === true);
+
   const headerRow = `<Row>${headers.map(h => `<Cell><Data ss:Type="String">${h}</Data></Cell>`).join('')}</Row>`;
-  const dataRows = allItems.map(it => `<Row>${headers.map(h => `<Cell><Data ss:Type="String">${xmlEsc(it[h])}</Data></Cell>`).join('')}</Row>`).join('');
+  const dataRows = filteredItems.map(it => `<Row>${headers.map(h => `<Cell><Data ss:Type="String">${xmlEsc(it[h])}</Data></Cell>`).join('')}</Row>`).join('');
+  
   const xml = `<?xml version="1.0"?>
 <?mso-application progid="Excel.Sheet"?>
 <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
@@ -77,7 +88,8 @@ document.getElementById('xls').addEventListener('click', () => {
 });
 
 document.getElementById('json').addEventListener('click', () => {
-  download(filename('json'), JSON.stringify(allItems, null, 2), 'application/json');
+  const filteredItems = allItems.filter(i => i.hasMonths === true);
+  download(filename('json'), JSON.stringify(filteredItems, null, 2), 'application/json');
 });
 
 document.getElementById('clear').addEventListener('click', async () => {
