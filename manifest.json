@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Amazon Search Scraper",
+  "version": "1.0.0",
+  "description": "Search Amazon, scrape multiple pages of results, view them on screen and download as CSV/Excel/JSON.",
+  "permissions": ["scripting", "tabs", "storage", "activeTab"],
+  "host_permissions": [
+    "*://*.amazon.com/*",
+    "*://*.amazon.co.uk/*",
+    "*://*.amazon.de/*",
+    "*://*.amazon.ca/*",
+    "*://*.amazon.fr/*",
+    "*://*.amazon.it/*",
+    "*://*.amazon.es/*",
+    "*://*.amazon.in/*",
+    "*://*.amazon.com.au/*",
+    "*://*.amazon.co.jp/*",
+    "*://*.amazon.com.mx/*",
+    "*://*.amazon.com.br/*",
+    "*://*.amazon.nl/*",
+    "*://*.amazon.se/*",
+    "*://*.amazon.pl/*",
+    "*://*.amazon.sg/*",
+    "*://*.amazon.ae/*",
+    "*://*.amazon.sa/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Amazon Search Scraper"
+  }
+}

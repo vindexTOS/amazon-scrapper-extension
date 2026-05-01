@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Amazon Scrape Results</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; padding: 0; background: #f4f5f7; color: #111; }
+    .toolbar { position: sticky; top: 0; background: #fff; padding: 12px 16px; border-bottom: 1px solid #e1e1e1; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; z-index: 5; }
+    .toolbar strong { font-size: 15px; }
+    .toolbar input { padding: 6px 8px; font-size: 13px; border: 1px solid #ccc; border-radius: 4px; min-width: 220px; }
+    button { background: #ff9900; border: 1px solid #e88e00; padding: 7px 12px; cursor: pointer; border-radius: 4px; font-weight: 600; font-size: 13px; }
+    button.secondary { background: #fff; color: #111; }
+    button.danger { background: #fff; color: #b00; border-color: #d99; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .count { color: #555; font-size: 13px; }
+    .progress-wrap { padding: 0 16px; background: #fff; border-bottom: 1px solid #e1e1e1; }
+    .progress-bar { height: 6px; background: #eee; border-radius: 3px; overflow: hidden; margin: 8px 0; }
+    .progress-bar > div { height: 100%; background: #ff9900; width: 0%; transition: width 0.3s; }
+    .progress-msg { font-size: 12px; color: #444; padding-bottom: 8px; }
+    .table-wrap { padding: 14px 16px 40px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; font-size: 13px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); border-radius: 6px; overflow: hidden; }
+    th, td { border-bottom: 1px solid #eee; padding: 8px 10px; text-align: left; vertical-align: top; }
+    th { background: #fafafa; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #555; position: sticky; top: 78px; z-index: 2; }
+    td.title { max-width: 380px; }
+    img.thumb { max-width: 60px; max-height: 60px; display: block; }
+    a { color: #007185; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    tr:hover td { background: #fffaf0; }
+    .empty { text-align: center; color: #888; padding: 30px; font-size: 14px; }
+    .badge { font-size: 10px; background: #fff3cd; color: #8a6d3b; padding: 2px 5px; border-radius: 3px; margin-left: 5px; }
+    .spacer { flex: 1; }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <strong>Amazon Scrape Results</strong>
+    <span id="count" class="count"></span>
+    <span class="spacer"></span>
+    <input id="filter" type="text" placeholder="Filter title / asin / price..." />
+    <button id="csv">CSV</button>
+    <button id="xls" class="secondary">Excel</button>
+    <button id="json" class="secondary">JSON</button>
+    <button id="clear" class="danger">Clear</button>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bar"><div id="bar"></div></div>
+    <div id="progress" class="progress-msg">Idle.</div>
+  </div>
+  <div class="table-wrap">
+    <table id="tbl">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Image</th>
+          <th>Title</th>
+          <th>Price</th>
+          <th>Rating</th>
+          <th>Reviews</th>
+          <th>Page</th>
+          <th>ASIN</th>
+          <th>Sponsored</th>
+          <th>Link</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div id="empty" class="empty" style="display:none">No items yet. Run a scrape from the popup.</div>
+  </div>
+  <script src="results.js"></script>
+</body>
+</html>
