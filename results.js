@@ -32,13 +32,11 @@ const filtered = allItems.filter(i => {
       <td>${it.image ? `<img class="thumb" src="${escapeHtml(it.image)}" loading="lazy">` : ''}</td>
       <td class="title">${escapeHtml(it.title)}${it.sponsored === 'yes' ? '<span class="badge">SPONSORED</span>' : ''}</td>
       <td>${escapeHtml(it.price)}</td>
-      <td>${escapeHtml(it.rating)}</td>
       <td>${escapeHtml(it.reviews)}</td>
       <td>${escapeHtml(it.page)}</td>
-      <td>${escapeHtml(it.asin)}</td>
-      <td>${escapeHtml(it.sponsored)}</td>
       <td>${it.url ? `<a href="${escapeHtml(it.url)}" target="_blank" rel="noopener">Open</a>` : ''}</td>
       <td>${it.hasMonths ? 'true' : 'false'}</td>
+      <td style="font-weight:bold; color:#b12704">${escapeHtml(it.monthCount)}</td> 
     `;
     frag.appendChild(tr);
   });
@@ -137,7 +135,7 @@ function buildUrl(domain, query, page) {
   
   // p_36:10000- represents "Price: $100.00 and Up" 
   // (values are in cents: 10000 = $100.00)
-  const priceFilter = encodeURIComponent('p_36:20000-'); 
+  const priceFilter = encodeURIComponent('p_36:10000-'); 
   
   return `https://www.${cleanDomain}/s?k=${encodeURIComponent(query)}&page=${page}&rh=${priceFilter}&ref=sr_pg_${page}`;
 }
@@ -189,7 +187,12 @@ function pageScraper() {
     const textContent = (card.innerText || '').toLowerCase();
     const htmlContent = (card.innerHTML || '').toLowerCase();
 
-    const hasMonths = textContent.includes('months') || htmlContent.includes('months');
+    const hasMonths = textContent.toLowerCase().includes('months') || htmlContent.toLowerCase().includes('months');
+    
+    // Extract the number of months using Regex
+    // Looks for: "for 3 months", "3-month", "3 months"
+    const monthMatch = textContent.match(/(\d+)\s*-?\s*months?/i);
+    const monthCount = monthMatch ? monthMatch[1] : '';
 
     let href = '';
     if (linkEl) {
@@ -204,7 +207,8 @@ function pageScraper() {
       reviews: reviewEl ? reviewEl.textContent.trim() : '',
       image: imgEl ? imgEl.getAttribute('src') : '',
       sponsored: sponsored ? 'yes' : 'no',
-      hasMonths 
+      hasMonths,
+      monthCount 
     });
   });
   return { captcha: false, items };
