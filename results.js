@@ -99,6 +99,13 @@ document.getElementById('clear').addEventListener('click', async () => {
   render();
 });
 
+// function getPriceNumber(priceStr) {
+//   if (!priceStr) return 0;
+//   // Remove currency symbols, commas, and whitespace
+//   const numericValue = priceStr.replace(/[^0-9.]/g, '');
+//   return parseFloat(numericValue) || 0;
+// }
+
 function filename(ext) {
   const { lastQuery } = window.__cache || {};
   const slug = (lastQuery?.query || 'amazon').replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '').toLowerCase();
@@ -127,7 +134,12 @@ chrome.storage.onChanged.addListener((changes, area) => {
 
 function buildUrl(domain, query, page) {
   const cleanDomain = String(domain || 'amazon.com').replace(/^https?:\/\//i, '').replace(/^www\./i, '').replace(/\/+$/, '');
-  return `https://www.${cleanDomain}/s?k=${encodeURIComponent(query)}&page=${page}&ref=sr_pg_${page}`;
+  
+  // p_36:10000- represents "Price: $100.00 and Up" 
+  // (values are in cents: 10000 = $100.00)
+  const priceFilter = encodeURIComponent('p_36:20000-'); 
+  
+  return `https://www.${cleanDomain}/s?k=${encodeURIComponent(query)}&page=${page}&rh=${priceFilter}&ref=sr_pg_${page}`;
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
